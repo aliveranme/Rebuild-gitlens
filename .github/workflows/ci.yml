@@ -1,0 +1,48 @@
+name: Patch Validation CI
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'patches/**'
+            - '.github/workflows/**'
+    pull_request:
+        paths:
+            - 'patches/**'
+            - '.github/workflows/**'
+    workflow_dispatch:
+
+jobs:
+    validate-patches:
+        name: Validate Patches Against Upstream
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  path: current-repo
+
+            - name: Get latest upstream version
+              id: upstream_version
+              run: |
+                  VERSION=$(curl -s https://api.github.com/repos/gitkraken/vscode-gitlens/releases/latest | grep '"tag_name":' | cut -d'"' -f4)
+                  echo "Latest upstream version: $VERSION"
+                  echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+            - name: Fetch upstream release
+              run: |
+                  git clone --depth 1 --branch ${{ env.VERSION }} https://github.com/gitkraken/vscode-gitlens.git upstream-repo
+
+            - name: Test apply patches
+              run: |
+                  echo "Testing patch application on upstream ${{ env.VERSION }}..."
+                  cd upstream-repo
+                  for patch in ../current-repo/patches/*.patch; do
+                      if [ -f "$patch" ]; then
+                          echo "Checking patch: $patch"
+                          git apply --check "$patch" || { echo "❌ Patch validation failed for $patch"; exit 1; }
+                          git apply "$patch"
+                      fi
+                  done
+                  echo "✅ All patches applied successfully!"
