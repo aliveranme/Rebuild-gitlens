@@ -1,5 +1,5 @@
 diff --git a/src/plus/gk/utils/checkin.utils.ts b/src/plus/gk/utils/checkin.utils.ts
-index 515a8c67e..6de4ffc2d 100644
+index 5b8b915..1b39c38 100644
 --- a/src/plus/gk/utils/checkin.utils.ts
 +++ b/src/plus/gk/utils/checkin.utils.ts
 @@ -154,10 +154,25 @@ export function getSubscriptionFromCheckIn(

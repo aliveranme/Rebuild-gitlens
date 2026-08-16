@@ -1,11 +1,18 @@
 diff --git a/src/plus/gk/utils/subscription.utils.ts b/src/plus/gk/utils/subscription.utils.ts
-index 82a75beec..266649ec2 100644
+index 5383ed1..e9299b3 100644
 --- a/src/plus/gk/utils/subscription.utils.ts
 +++ b/src/plus/gk/utils/subscription.utils.ts
-@@ -29,58 +29,7 @@ export function compareSubscriptionPlans(
+@@ -33,63 +33,12 @@ export function compareSubscriptionPlans(
+  * Surfaces gated on this (e.g. the Commit Graph) replace their entire content with an account screen,
+  * so callers routing work to one must treat it as unusable ahead of any plan/visibility check.
+  */
+-export function isAccountAccessRequired(subscription: Subscription): boolean {
+-	return subscription.account == null || subscription.account.verified === false;
++export function isAccountAccessRequired(_subscription: Subscription): boolean {
++	return false;
  }
  
- export function computeSubscriptionState(subscription: Optional<Subscription, 'state'>): SubscriptionState {
+-export function computeSubscriptionState(subscription: Optional<Subscription, 'state'>): SubscriptionState {
 -	const {
 -		account,
 -		plan: { actual, effective },
@@ -58,11 +65,12 @@ index 82a75beec..266649ec2 100644
 -		case 'enterprise':
 -			return SubscriptionState.Trial;
 -	}
++export function computeSubscriptionState(_subscription: Optional<Subscription, 'state'>): SubscriptionState {
 +	return SubscriptionState.Paid;
  }
  
  export function getSubscriptionNextPaidPlanId(subscription: Optional<Subscription, 'state'>): PaidSubscriptionPlanIds {
-@@ -251,7 +201,7 @@ export function getCommunitySubscription(subscription?: Subscription): Subscript
+@@ -281,7 +230,7 @@ export function getCommunitySubscription(subscription?: Subscription): Subscript
  		...subscription,
  		plan: {
  			actual: getSubscriptionPlan(
@@ -71,7 +79,7 @@ index 82a75beec..266649ec2 100644
  				false,
  				0,
  				undefined,
-@@ -260,7 +210,7 @@ export function getCommunitySubscription(subscription?: Subscription): Subscript
+@@ -290,7 +239,7 @@ export function getCommunitySubscription(subscription?: Subscription): Subscript
  					: undefined,
  			),
  			effective: getSubscriptionPlan(
@@ -80,3 +88,20 @@ index 82a75beec..266649ec2 100644
  				false,
  				0,
  				undefined,
+@@ -299,8 +248,14 @@ export function getCommunitySubscription(subscription?: Subscription): Subscript
+ 					: undefined,
+ 			),
+ 		},
+-		account: undefined,
++		account: subscription?.account ?? {
++			id: 'voyager-enterprise',
++			name: 'Voyager',
++			email: 'voyager@gitlens.dev',
++			verified: true,
++			createdOn: '2020-01-01T00:00:00.000Z',
++		},
+ 		activeOrganization: undefined,
+-		state: SubscriptionState.Community,
++		state: SubscriptionState.Paid,
+ 	};
+ }
