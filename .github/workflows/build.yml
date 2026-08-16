@@ -51,7 +51,7 @@ jobs:
 
             - name: Setup pnpm
               if: steps.check_tag.outputs.exists == 'false'
-              uses: pnpm/action-setup@v3
+              uses: pnpm/action-setup@v4
               with:
                   version: 10
 
